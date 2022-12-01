@@ -2,3 +2,5 @@
 data/
 .ipynb_checkpoints
 .DS_Store
+/notebooks/Similar-product-recommender.ipynb
+/notebooks/Jan_April_10%_2020.ipynb
