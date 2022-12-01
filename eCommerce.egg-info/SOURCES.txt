@@ -1,0 +1,7 @@
+setup.py
+eCommerce.egg-info/PKG-INFO
+eCommerce.egg-info/SOURCES.txt
+eCommerce.egg-info/dependency_links.txt
+eCommerce.egg-info/top_level.txt
+recommender/__init__.py
+recommender/ml_logic.py
