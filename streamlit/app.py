@@ -20,7 +20,7 @@ cols = ['product_id','category_code','brand','price']
 
 heading_properties = [('font-size', '16px'),('text-align', 'center'),
                       ('color', 'white'),  ('font-weight', 'bold'),
-                      ('background', 'black'),('border', '1.2px solid')]
+                      ('background', 'gray'),('border', '1.2px solid')]
 
 cell_properties = [('font-size', '16px'),('text-align', 'center')]
 
@@ -47,12 +47,12 @@ st.sidebar.markdown('Contributors: Christian Jergen,Héléna Antoniadis, Zhengha
 st.sidebar.markdown('Supervisors: Julio Quintana, Lorcan Rae')
 st.sidebar.info("Read more about how the model works and see the code on our [Github](https://github.com/sailormoonvicky/eCommerce).", icon="ℹ️")
 
-def get_select_box_data(product, recommender):
-    # Remember to filter by brand here
-    return pd.DataFrame(#{f'{brand}': [1,2,3,4,5],
-        {'Product': product,
-        'Recommender': recommender
-        })
+# def get_select_box_data(product, recommender):
+#     # Remember to filter by brand here
+#     return pd.DataFrame(#{f'{brand}': [1,2,3,4,5],
+#         {'Product': product,
+#         'Recommender': recommender
+#         })
 
 # brand = [i if st.session_state[i]==True else None for i in st.session_state][0]
 
@@ -87,6 +87,38 @@ with tab_start:
 
 with tab_apple:
     product = st.selectbox("Find the best sellers of Apple:", df.product_id, index =10)
+    st.write(f'''
+         ##### <div style="text-align: center"> In the 2020-21, <span style="color:blue">[{product}] </span> is one of the Best sellers of Apple, xxx have been sold out. </span> </div>
+
+          ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
+         ''', unsafe_allow_html=True)
+    col1_1,col1_2,col1_3=st.columns(3)
+    with col1_1:
+        st.write('')
+
+    with col1_2:
+        st.image('data/ip.png')
+
+    with col1_3:
+        st.write('')
+
+    styler_product = (df[df.product_id == product][cols]
+                   .style.set_properties(**{'background': 'azure', 'border': '1.2px solid'})
+                   .hide(axis='index')
+                   .set_table_styles(dfstyle)
+                   )
+    st.table(styler_product)
+
+    st.write(f'''
+             ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
+             ''', unsafe_allow_html=True)
+
+    recommend_df = df[cols][:10].style.set_properties(**{'background': 'azure', 'border': '1.2px solid'}).hide(axis='index').set_table_styles(dfstyle)
+
+    st.table(recommend_df)
+
+with tap_samsung:
+    product = st.selectbox("Find the best sellers of Samsung:", df.product_id, index =10)
     st.write(f'''
          ##### <div style="text-align: center"> In the 2020-21, <span style="color:blue">[{product}] </span> is one of the Best sellers of Apple, xxx have been sold out. </span> </div>
 
