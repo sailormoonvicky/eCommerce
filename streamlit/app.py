@@ -86,36 +86,52 @@ with tab_start:
     st.write('Welcome!')
 
 with tab_apple:
-    product = st.selectbox("Find the best sellers of Apple:", df.product_id, index =10)
-    st.write(f'''
-         ##### <div style="text-align: center"> In the 2020-21, <span style="color:blue">[{product}] </span> is one of the Best sellers of Apple, xxx have been sold out. </span> </div>
+    expand_brand = st.expander("Best sellers of Apple", expanded=False)
+    with expand_brand:
+        product = st.selectbox("Find the best sellers of Apple:", df.product_id, index =10)
+        st.write(f'''
+            ##### <div style="text-align: center"> In the 2020-21, <span style="color:blue">[{product}] </span> is one of the Best sellers of Apple, xxx have been sold out. </span> </div>
 
-          ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
-         ''', unsafe_allow_html=True)
-    col1_1,col1_2,col1_3=st.columns(3)
-    with col1_1:
-        st.write('')
+            ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
+            ''', unsafe_allow_html=True)
+        col1_1,col1_2,col1_3=st.columns(3)
+        with col1_1:
+            st.write('')
 
-    with col1_2:
-        st.image('data/ip.png')
+        with col1_2:
+            st.image('data/ip.png')
 
-    with col1_3:
-        st.write('')
+        with col1_3:
+            st.write('')
 
-    styler_product = (df[df.product_id == product][cols]
-                   .style.set_properties(**{'background': 'azure', 'border': '1.2px solid'})
-                   .hide(axis='index')
-                   .set_table_styles(dfstyle)
-                   )
-    st.table(styler_product)
+        styler_product = (df[df.product_id == product][cols]
+                    .style.set_properties(**{'background': 'azure', 'border': '1.2px solid'})
+                    .hide(axis='index')
+                    .set_table_styles(dfstyle)
+                    )
+        st.table(styler_product)
 
-    st.write(f'''
-             ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
-             ''', unsafe_allow_html=True)
+###################
+    expand_similarity = st.expander("Similar recommender you maybe like")
+    with expand_similarity:
+        st.write(f'''
+                ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
+                ''', unsafe_allow_html=True)
 
-    recommend_df = df[cols][:10].style.set_properties(**{'background': 'azure', 'border': '1.2px solid'}).hide(axis='index').set_table_styles(dfstyle)
+        recommend_df = df[cols][:10].style.set_properties(**{'background': 'azure', 'border': '1.2px solid'}).hide(axis='index').set_table_styles(dfstyle)
 
-    st.table(recommend_df)
+        st.table(recommend_df)
+
+###################
+    expand_cross = st.expander("Crossed products recommender")
+    with expand_cross:
+        st.write(f'''
+                ##### <div style="text-align: center"> According to our model, you maybe also like these: </span> </div>
+                ''', unsafe_allow_html=True)
+
+        cross_df = df[cols][10:30].style.set_properties(**{'background': 'azure', 'border': '1.2px solid'}).hide(axis='index').set_table_styles(dfstyle)
+
+        st.table(cross_df)
 
     # product = st.selectbox("Find the best sellers of Apple:", df.product_id, index =10)
 
