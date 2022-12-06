@@ -2,10 +2,14 @@ from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 import numpy as np
 
-def get_data_2(path_df1,path_df2):
-    df_1 = pd.read_csv(path_df1)
-    df_2 = pd.read_csv(path_df2)
-    return (df_1, df_2)
+def get_data_2():
+    path_df1 = '../data/Oct19_20/latent_df_1_with_100pct_data_50_svd_components_oct19.csv'
+    path_df2 = '../data/Oct19_20/latent_df_2_with_100pct_data_100_svd_components_oct19.csv'
+    path_df3 = '../data/Oct19_20/X_meta_with_100pct_data_oct19.csv'
+    df_1 = pd.read_csv(path_df1,index_col=[0])
+    df_2 = pd.read_csv(path_df2,index_col=[0])
+    meta_df = pd.read_csv(path_df3, index_col=[0])
+    return (df_1, df_2, meta_df)
 
 def recommendation_model( product_id, df_1, df_2, weight_features = 0.8):
     latent_df_1 = df_1
@@ -36,7 +40,6 @@ def recommendation_model( product_id, df_1, df_2, weight_features = 0.8):
 def top_n_products(rec_df, meta_df, n=10, ranking='hybrid'):
 
     """Valid inputs for ranking: 'features', 'ratings', 'hybrid'"""
-
     feat_idx = rec_df.sort_values(ranking, ascending=False).index
 
     counter = 0
@@ -46,8 +49,9 @@ def top_n_products(rec_df, meta_df, n=10, ranking='hybrid'):
     prices=[]
 
     for i in feat_idx:
-        meta_text = meta_df[meta_df['product_id'] == i][['metadata']].iloc[0,:][0]
-        price = meta_df[meta_df['product_id'] == i][['price']].iloc[0,:][0]
+        # import ipdb; ipdb.set_trace()
+        meta_text = meta_df[meta_df['product_id.1'] == i][['metadata']].iloc[0,:][0]
+        price = meta_df[meta_df['product_id.1'] == i][['price']].iloc[0,:][0]
 
         product_ids.append(i)
         metas.append(meta_text)
@@ -55,16 +59,24 @@ def top_n_products(rec_df, meta_df, n=10, ranking='hybrid'):
 
         counter += 1
 
-    new_df = pd.DataFrame({'product_id':product_ids, 'meta_text':metas, 'price':prices}).drop_duplicates('meta_text').iloc[:n,:]
+    new_df = pd.DataFrame({'product_id.1':product_ids, 'meta_text':metas, 'price':prices}).drop_duplicates('meta_text').iloc[:n,:]
 
     return new_df.reset_index().drop(columns='index')
 
 
 if __name__ == '__main__':
-    product_id=5100337
-    path_df1 = '../data/latent_dec_19/latent_df_1_with_0.25_data_50_svd_components.csv'
-    path_df2 = '../data/latent_dec_19/latent_df_2_with_0.25_data_200_svd_components.csv'
-    df_1, df_2 = get_data_2(path_df1,path_df2)
-    rec_df = recommendation_model(product_id, df_1, df_2, weight_features = 0.8)
-    meta_df = '../data/X_meta2019-Dec.csv_10%.csv'
-    new_df = top_n_products(rec_df, meta_df, n=10, ranking='features')
+    try:
+        # 1003363 1002544
+        product_id= 1000978
+        df_1, df_2, meta_df = get_data_2()
+        # print("Starting recommendation model")
+        rec_df = recommendation_model(product_id, df_1, df_2, weight_features = 0.8)
+        # print("Starting product sorting")
+        new_df = top_n_products(rec_df, meta_df, n=10, ranking='features')
+        # print(new_df.head())
+
+    except:
+        import ipdb, traceback, sys
+        extype, value, tb = sys.exc_info()
+        traceback.print_exc()
+        ipdb.post_mortem(tb)
