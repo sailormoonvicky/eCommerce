@@ -11,23 +11,78 @@ st.set_page_config(
 
 @st.cache
 def load_data():
-    df = pd.read_csv('data/2019_oct_sort_1000.csv')
-    df['price']=df['price'].apply(lambda x: round(x,2))
+    df = pd.read_csv('data/top25.csv')
     return df
 
 df = load_data()
 
-cols = ['product_id','category_code','brand','price']
+hide_table_row_index = """
+            <style>
+            thead tr th:first-child {display:none}
+            tbody th {display:none}
+            </style>   """
+
+center_heading_text = """
+    <style>
+        .col_heading   {text-align: center !important}
+    </style>          """
+
+center_row_text = """
+    <style>
+        td  {text-align: center !important}
+    </style>      """
+
+# Inject CSS with Markdown
+
+st.markdown(hide_table_row_index, unsafe_allow_html=True)
+st.markdown(center_heading_text, unsafe_allow_html=True)
+st.markdown(center_row_text, unsafe_allow_html=True)
+
+brands=['Samsung', 'Apple', 'Huawei', 'LG', 'Lenovo']
+cols = ['product_id','category_code','brand','price', 'price_category']
 
 heading_properties = [('font-size', '16px'),('text-align', 'center'),
                       ('color', 'white'),  ('font-weight', 'bold'),
-                      ('background', 'gray'),('border', '1.2px solid')]
+                      ('background', 'gray'),('border', '1.2px solid black')]
 
 cell_properties = [('font-size', '16px'),('text-align', 'center')]
 
+# definite the styler function
 dfstyle = [{"selector": "th", "props": heading_properties},
                {"selector": "td", "props": cell_properties}]
 
+def make_pretty(styler):
+    styler.set_properties(**{'background': 'mistyrose', 'border': '1.2px solid'})
+    styler.hide(axis='index')
+    styler.set_table_styles(dfstyle)
+    styler.format(precision=2)
+    return styler
+
+def expand_brand(i):
+    expand_brand = st.expander("Best sellers of {}".format(brands[i]), expanded=False)
+    with expand_brand:
+        product = st.selectbox("Find the best sellers of {}:".format(brands[i]), df[df.brand==brands[i].lower()].product_id)
+        st.write(f'''
+            ###### <div style="text-align: center"> According to our model, </span> </div>
+
+
+            ###### <div style="text-align: center"> <span style="color:indianred">[{product}] </span> is one of the Best sellers of <span style="color:indianred">  {brands[i]} </span> in 2020-2021.</span> </div>
+            ''', unsafe_allow_html=True)
+        col1_1,col1_2,col1_3=st.columns(3)
+        with col1_1:
+            st.write('')
+
+        with col1_2:
+            st.image(f'data/{df[df.product_id==product].metadata.tolist()[0]}.png')
+
+        with col1_3:
+            st.write('')
+
+        styler_product = df[df.product_id == product][cols].style.pipe(make_pretty)
+
+        return st.table(styler_product)
+
+#Home page of the app
 st.title("Let's go shopping!")
 st.markdown('''##### <span style="color:gray">Predict consumer preference and recommend related products</span>
             ''', unsafe_allow_html=True)
@@ -48,106 +103,34 @@ st.sidebar.info("Read more about how the model works and see the code on our [Gi
 
 col1, col2,col3, col4, col5 = st.columns(5)
 
-tab_start, tab_apple, tab_samsung, tab_adidas, tab_chanel, tab_nintendo = st.tabs(["Start","Apple", "Samsung", "adidas", "Chanel",'Nintendo'])
+tab_start, tab_samsung, tab_apple, tab_huawei, tab_lg, tab_lenovo = st.tabs(['Start', 'Samsung', 'Apple', 'Huawei', 'LG', 'Lenovo'])
 with col1:
-    image = Image.open('data/apple.png')
-    st.image(image, caption='Apple')
+    image = Image.open('data/{}.png'.format(brands[0]))
+    st.image(image, caption='{}'.format(brands[0]))
 
 with col2:
-    image = Image.open('data/samsung.png')
-    st.image(image, caption='Samsung')
+    image = Image.open('data/{}.png'.format(brands[1]))
+    st.image(image, caption='{}'.format(brands[1]))
 
 with col3:
-    image = Image.open('data/adidas.png')
-    st.image(image, caption='adidas')
+    image = Image.open('data/{}.png'.format(brands[2]))
+    st.image(image, caption='{}'.format(brands[2]))
 
 with col4:
-    image = Image.open('data/chanel.png')
-    st.image(image, caption='Chanel')
+    image = Image.open('data/{}.png'.format(brands[3]))
+    st.image(image, caption='{}'.format(brands[3]))
 
 with col5:
-    image = Image.open('data/nintendo.png')
-    st.image(image, caption='Nintendo')
+    image = Image.open('data/{}.png'.format(brands[4]))
+    st.image(image, caption='{}'.format(brands[4]))
 
 with tab_start:
     st.write('Welcome!')
     st.markdown('Contributors: Christian Jergen,Héléna Antoniadis, Zhenghan Hu')
     st.markdown('Supervisors: Julio Quintana, Lorcan Rae')
 
-with tab_apple:
-    expand_brand = st.expander("Best sellers of Apple", expanded=False)
-    with expand_brand:
-        product = st.selectbox("Find the best sellers of Apple:", df.product_id, index =10)
-        st.write(f'''
-            ##### <div style="text-align: center"> In the 2020-21, <span style="color:blue">[{product}] </span> is one of the Best sellers of Apple. </span> </div>
-
-            ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
-            ''', unsafe_allow_html=True)
-        col1_1,col1_2,col1_3=st.columns(3)
-        with col1_1:
-            st.write('')
-
-        with col1_2:
-            st.image('data/ip.png')
-
-        with col1_3:
-            st.write('')
-
-        styler_product = (df[df.product_id == product][cols]
-                    .style.set_properties(**{'background': 'azure', 'border': '1.2px solid'})
-                    .hide(axis='index')
-                    .set_table_styles(dfstyle)
-                    )
-        # styler_product=pd.DataFrame(styler_product).set_index('product_id', drop=False)
-        st.table(styler_product)
-
-###################
-    expand_similarity = st.expander("Similar recommender you maybe like")
-    with expand_similarity:
-        st.write(f'''
-                ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
-                ''', unsafe_allow_html=True)
-
-        recommend_df = df[cols][:10].style.set_properties(**{'background': 'azure', 'border': '1.2px solid'}).hide(axis='index').set_table_styles(dfstyle)
-        # recommend_df = pd.DataFrame(recommend_df).set_index('product_id', drop=False)
-        st.table(recommend_df)
-
-###################
-    expand_cross = st.expander("Crossed products recommender")
-    with expand_cross:
-        st.write(f'''
-                ##### <div style="text-align: center"> According to our model, you maybe also like these: </span> </div>
-                ''', unsafe_allow_html=True)
-
-        cross_df = df[cols][10:30].style.set_properties(**{'background': 'azure', 'border': '1.2px solid'}).hide(axis='index').set_table_styles(dfstyle)
-
-        st.table(cross_df)
-
 with tab_samsung:
-    expand_brand = st.expander("Best sellers of Samsung", expanded=False)
-    with expand_brand:
-        product = st.selectbox("Find the best sellers of Samsung:", df.product_id, index =10)
-        st.write(f'''
-            ##### <div style="text-align: center"> In the 2020-21, <span style="color:blue">[{product}] </span> is one of the Best sellers of Samsung, xxx have been sold out. </span> </div>
-
-            ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
-            ''', unsafe_allow_html=True)
-        col1_1,col1_2,col1_3=st.columns(3)
-        with col1_1:
-            st.write('')
-
-        with col1_2:
-            st.image('data/product.png')
-
-        with col1_3:
-            st.write('')
-
-        styler_product = (df[df.product_id == product][cols]
-                    .style.set_properties(**{'background': 'azure', 'border': '1.2px solid'})
-                    .hide(axis='index')
-                    .set_table_styles(dfstyle)
-                    )
-        st.table(styler_product)
+    expand_brand(0)
 
 ###################
     expand_similarity = st.expander("Similar recommender you maybe like")
@@ -156,9 +139,9 @@ with tab_samsung:
                 ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
                 ''', unsafe_allow_html=True)
 
-        recommend_df = df[cols][:10].style.set_properties(**{'background': 'azure', 'border': '1.2px solid'}).hide(axis='index').set_table_styles(dfstyle)
-
-        st.table(recommend_df)
+        recommend_df = df[cols][:10]
+        recommend_styler = recommend_df.style.pipe(make_pretty)
+        st.table(recommend_styler)
 
 ###################
     expand_cross = st.expander("Crossed products recommender")
@@ -167,35 +150,12 @@ with tab_samsung:
                 ##### <div style="text-align: center"> According to our model, you maybe also like these: </span> </div>
                 ''', unsafe_allow_html=True)
 
-        cross_df = df[cols][10:30].style.set_properties(**{'background': 'azure', 'border': '1.2px solid'}).hide(axis='index').set_table_styles(dfstyle)
+        cross_df = df[cols][10:30]
+        cross_styler = cross_df.style.pipe(make_pretty)
+        st.table(cross_styler)
 
-        st.table(cross_df)
-
-with tab_adidas:
-    expand_brand = st.expander("Best sellers of adidas", expanded=False)
-    with expand_brand:
-        product = st.selectbox("Find the best sellers of Adidas:", df.product_id, index =10)
-        st.write(f'''
-            ##### <div style="text-align: center"> In the 2020-21, <span style="color:blue">[{product}] </span> is one of the Best sellers of adidas. </span> </div>
-
-            ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
-            ''', unsafe_allow_html=True)
-        col1_1,col1_2,col1_3=st.columns(3)
-        with col1_1:
-            st.write('')
-
-        with col1_2:
-            st.image('data/product.png')
-
-        with col1_3:
-            st.write('')
-
-        styler_product = (df[df.product_id == product][cols]
-                    .style.set_properties(**{'background': 'azure', 'border': '1.2px solid'})
-                    .hide(axis='index')
-                    .set_table_styles(dfstyle)
-                    )
-        st.table(styler_product)
+with tab_apple:
+    expand_brand(1)
 
 ###################
     expand_similarity = st.expander("Similar recommender you maybe like")
@@ -204,9 +164,9 @@ with tab_adidas:
                 ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
                 ''', unsafe_allow_html=True)
 
-        recommend_df = df[cols][:10].style.set_properties(**{'background': 'azure', 'border': '1.2px solid'}).hide(axis='index').set_table_styles(dfstyle)
-
-        st.table(recommend_df)
+        recommend_df = df[cols][:10]
+        recommend_styler = recommend_df.style.pipe(make_pretty)
+        st.table(recommend_styler)
 
 ###################
     expand_cross = st.expander("Crossed products recommender")
@@ -215,36 +175,12 @@ with tab_adidas:
                 ##### <div style="text-align: center"> According to our model, you maybe also like these: </span> </div>
                 ''', unsafe_allow_html=True)
 
-        cross_df = df[cols][10:30].style.set_properties(**{'background': 'azure', 'border': '1.2px solid'}).hide(axis='index').set_table_styles(dfstyle)
+        cross_df = df[cols][10:30]
+        cross_styler = cross_df.style.pipe(make_pretty)
+        st.table(cross_styler)
 
-        st.table(cross_df)
-
-
-with tab_chanel:
-    expand_brand = st.expander("Best sellers of Chanel", expanded=False)
-    with expand_brand:
-        product = st.selectbox("Find the best sellers of Chanel:", df.product_id, index =10)
-        st.write(f'''
-            ##### <div style="text-align: center"> In the 2020-21, <span style="color:blue">[{product}] </span> is one of the Best sellers of Chanel. </span> </div>
-
-            ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
-            ''', unsafe_allow_html=True)
-        col1_1,col1_2,col1_3=st.columns(3)
-        with col1_1:
-            st.write('')
-
-        with col1_2:
-            st.image('data/product.png')
-
-        with col1_3:
-            st.write('')
-
-        styler_product = (df[df.product_id == product][cols]
-                    .style.set_properties(**{'background': 'azure', 'border': '1.2px solid'})
-                    .hide(axis='index')
-                    .set_table_styles(dfstyle)
-                    )
-        st.table(styler_product)
+with tab_huawei:
+    expand_brand(2)
 
 ###################
     expand_similarity = st.expander("Similar recommender you maybe like")
@@ -253,9 +189,9 @@ with tab_chanel:
                 ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
                 ''', unsafe_allow_html=True)
 
-        recommend_df = df[cols][:10].style.set_properties(**{'background': 'azure', 'border': '1.2px solid'}).hide(axis='index').set_table_styles(dfstyle)
-
-        st.table(recommend_df)
+        recommend_df = df[cols][:10]
+        recommend_styler = recommend_df.style.pipe(make_pretty)
+        st.table(recommend_styler)
 
 ###################
     expand_cross = st.expander("Crossed products recommender")
@@ -264,35 +200,13 @@ with tab_chanel:
                 ##### <div style="text-align: center"> According to our model, you maybe also like these: </span> </div>
                 ''', unsafe_allow_html=True)
 
-        cross_df = df[cols][10:30].style.set_properties(**{'background': 'azure', 'border': '1.2px solid'}).hide(axis='index').set_table_styles(dfstyle)
+        cross_df = df[cols][10:30]
+        cross_styler = cross_df.style.pipe(make_pretty)
+        st.table(cross_styler)
 
-        st.table(cross_df)
 
-with tab_nintendo:
-    expand_brand = st.expander("Best sellers of Nintendo", expanded=False)
-    with expand_brand:
-        product = st.selectbox("Find the best sellers of Nintendo:", df.product_id, index =10)
-        st.write(f'''
-            ##### <div style="text-align: center"> In the 2020-21, <span style="color:blue">[{product}] </span> is one of the Best sellers of Nintendo. </span> </div>
-
-            ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
-            ''', unsafe_allow_html=True)
-        col1_1,col1_2,col1_3=st.columns(3)
-        with col1_1:
-            st.write('')
-
-        with col1_2:
-            st.image('data/product.png')
-
-        with col1_3:
-            st.write('')
-
-        styler_product = (df[df.product_id == product][cols]
-                    .style.set_properties(**{'background': 'azure', 'border': '1.2px solid'})
-                    .hide(axis='index')
-                    .set_table_styles(dfstyle)
-                    )
-        st.table(styler_product)
+with tab_lg:
+    expand_brand(3)
 
 ###################
     expand_similarity = st.expander("Similar recommender you maybe like")
@@ -301,9 +215,9 @@ with tab_nintendo:
                 ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
                 ''', unsafe_allow_html=True)
 
-        recommend_df = df[cols][:10].style.set_properties(**{'background': 'azure', 'border': '1.2px solid'}).hide(axis='index').set_table_styles(dfstyle)
-
-        st.table(recommend_df)
+        recommend_df = df[cols][:10]
+        recommend_styler = recommend_df.style.pipe(make_pretty)
+        st.table(recommend_styler)
 
 ###################
     expand_cross = st.expander("Crossed products recommender")
@@ -312,186 +226,31 @@ with tab_nintendo:
                 ##### <div style="text-align: center"> According to our model, you maybe also like these: </span> </div>
                 ''', unsafe_allow_html=True)
 
-        cross_df = df[cols][10:30].style.set_properties(**{'background': 'azure', 'border': '1.2px solid'}).hide(axis='index').set_table_styles(dfstyle)
+        cross_df = df[cols][10:30]
+        cross_styler = cross_df.style.pipe(make_pretty)
+        st.table(cross_styler)
 
-        st.table(cross_df)
+with tab_lenovo:
+    expand_brand(4)
 
+###################
+    expand_similarity = st.expander("Similar recommender you maybe like")
+    with expand_similarity:
+        st.write(f'''
+                ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
+                ''', unsafe_allow_html=True)
 
-    # product = st.selectbox("Find the best sellers of Apple:", df.product_id, index =10)
+        recommend_df = df[cols][:10]
+        recommend_styler = recommend_df.style.pipe(make_pretty)
+        st.table(recommend_styler)
 
-    # if "apple" not in st.session_state:
-    #     st.session_state["apple"] = False
+###################
+    expand_cross = st.expander("Crossed products recommender")
+    with expand_cross:
+        st.write(f'''
+                ##### <div style="text-align: center"> According to our model, you maybe also like these: </span> </div>
+                ''', unsafe_allow_html=True)
 
-    # if st.button("Check Apple's Products"):
-    #     st.session_state["apple"] = not st.session_state["apple"]
-    #     st.session_state["samsung"] = False
-    #     st.session_state["adidas"] = False
-    #     st.session_state["chanel"] = False
-    #     st.session_state["nintendo"] = False
-
-    # if st.session_state['apple'] == True:
-    #     with st.form(key = 'edit_form_apple'):
-    #         # print is visible in the server output, not in the page
-
-    #         product = ['Product1', 'Product2', 'Product3', 'Product4', 'Product5']
-    #         recommender = ['r1','r2','r3','r4','r5'], ['r6','r7','r8','r9','r10'], ['r11','r12','r13','r14','r15'], ['r16','r17','r18','r19','r20'],['r21','r22','r23','r24','r25']
-    #         df = get_select_box_data(product, recommender)
-    #         option = st.selectbox('Select a product', df['Product'])
-
-    #         if st.form_submit_button(label='Product Selected'):
-    #             filtered_df = df[df['Product'] == option]
-    #             recommender_df = filtered_df['Recommender']
-    #             st.write('Recommender')
-    #             st.write(recommender_df.iloc[0][0])
-    #             st.write(recommender_df.iloc[0][1])
-    #             st.write(recommender_df.iloc[0][2])
-    #             st.write(recommender_df.iloc[0][3])
-    #             st.write(recommender_df.iloc[0][4])
-    # else:
-    #     st.write('Find our best sellers of Apple')
-
-
-    # if "samsung" not in st.session_state:
-    #     st.session_state["samsung"] = False
-
-    # if st.button("Check Samsung's Products"):
-    #     st.session_state["apple"] = False
-    #     st.session_state["samsung"] = not st.session_state["samsung"]
-    #     st.session_state["adidas"] = False
-    #     st.session_state["chanel"] = False
-    #     st.session_state["nintendo"] = False
-
-    # if st.session_state['samsung'] == True:
-    #     with st.form(key = 'edit_form_samsung'):
-    #             # print is visible in the server output, not in the page
-
-    #         product = ['Product_s1', 'Product_s2', 'Product_s3', 'Product_s4', 'Product_s5']
-    #         recommender = ['r1','r2','r3','r4','r5'], ['r6','r7','r8','r9','r10'], ['r11','r12','r13','r14','r15'], ['r16','r17','r18','r19','r20'],['r21','r22','r23','r24','r25']
-    #         df = get_select_box_data(product, recommender)
-    #         option = st.selectbox('Select a product', df['Product'])
-
-    #         if st.form_submit_button(label='Product Selected'):
-    #             filtered_df = df[df['Product'] == option]
-    #             recommender_df = filtered_df['Recommender']
-    #             st.write('Recommender')
-    #             st.write(recommender_df.iloc[0][0])
-    #             st.write(recommender_df.iloc[0][1])
-    #             st.write(recommender_df.iloc[0][2])
-    #             st.write(recommender_df.iloc[0][3])
-    #             st.write(recommender_df.iloc[0][4])
-    # else:
-    #     st.write('Find our best sellers of Samsung')
-
-
-    # if "adidas" not in st.session_state:
-    #     st.session_state["adidas"] = False
-
-    # if st.button("Check adidas' Products"):
-    #     st.session_state["apple"] = False
-    #     st.session_state["samsung"] = False
-    #     st.session_state["adidas"] = not st.session_state["adidas"]
-    #     st.session_state["chanel"] = False
-    #     st.session_state["nintendo"] = False
-
-    # if st.session_state['adidas'] == True:
-    #     with st.form(key = 'edit_form_adidas'):
-    #             # print is visible in the server output, not in the page
-
-    #         product = ['Product_a1', 'Product_a2', 'Product_a3', 'Product_a4', 'Product_a5']
-    #         recommender = ['r1','r2','r3','r4','r5'], ['r6','r7','r8','r9','r10'], ['r11','r12','r13','r14','r15'], ['r16','r17','r18','r19','r20'],['r21','r22','r23','r24','r25']
-    #         df = get_select_box_data(product, recommender)
-    #         option = st.selectbox('Select a product', df['Product'])
-
-    #         if st.form_submit_button(label='Product Selected'):
-    #             filtered_df = df[df['Product'] == option]
-    #             recommender_df = filtered_df['Recommender']
-    #             st.write('Recommender')
-    #             st.write(recommender_df.iloc[0][0])
-    #             st.write(recommender_df.iloc[0][1])
-    #             st.write(recommender_df.iloc[0][2])
-    #             st.write(recommender_df.iloc[0][3])
-    #             st.write(recommender_df.iloc[0][4])
-    # else:
-    #     st.write('Find our best sellers of adidas')
-
-
-    # if "chanel" not in st.session_state:
-    #     st.session_state["chanel"] = False
-
-    # if st.button("Check Chanel's Products"):
-    #     st.session_state["apple"] = False
-    #     st.session_state["samsung"] = False
-    #     st.session_state["adidas"] = False
-    #     st.session_state["chanel"] = not st.session_state["chanel"]
-    #     st.session_state["nintendo"] = False
-
-    # if st.session_state['chanel'] == True:
-    #     with st.form(key = 'edit_form_chanel'):
-    #             # print is visible in the server output, not in the page
-
-    #         product = ['Product1', 'Product2', 'Product3', 'Product4', 'Product5']
-    #         recommender = ['r1','r2','r3','r4','r5'], ['r6','r7','r8','r9','r10'], ['r11','r12','r13','r14','r15'], ['r16','r17','r18','r19','r20'],['r21','r22','r23','r24','r25']
-    #         df = get_select_box_data(product, recommender)
-    #         option = st.selectbox('Select a product', df['Product'])
-
-    #         if st.form_submit_button(label='Product Selected'):
-    #             # st.session_state["FormSubmitter:edit_form-Product Selected"] = not st.session_state["FormSubmitter:edit_form-Product Selected"]
-    #             filtered_df = df[df['Product'] == option]
-    #             recommender_df = filtered_df['Recommender']
-    #             st.write('Recommender')
-    #             st.write(recommender_df.iloc[0][0])
-    #             st.write(recommender_df.iloc[0][1])
-    #             st.write(recommender_df.iloc[0][2])
-    #             st.write(recommender_df.iloc[0][3])
-    #             st.write(recommender_df.iloc[0][4])
-    # else:
-    #     st.write('Find our best sellers of Chanel')
-
-
-#     if "nintendo" not in st.session_state:
-#         st.session_state["nintendo"] = False
-
-#     if st.button("Check Nintendo's Products"):
-#         st.session_state["apple"] = False
-#         st.session_state["samsung"] = False
-#         st.session_state["adidas"] = False
-#         st.session_state["chanel"] = False
-#         st.session_state["nintendo"] = not st.session_state["nintendo"]
-
-#     if st.session_state['nintendo'] == True:
-#         with st.form(key = 'edit_form_nintendo'):
-#             # print is visible in the server output, not in the page
-
-#             product = ['Product1', 'Product2', 'Product3', 'Product4', 'Product5']
-#             recommender = ['r1','r2','r3','r4','r5'], ['r6','r7','r8','r9','r10'], ['r11','r12','r13','r14','r15'], ['r16','r17','r18','r19','r20'],['r21','r22','r23','r24','r25']
-#             df = get_select_box_data(product, recommender)
-#             option = st.selectbox('Select a product', df['Product'])
-
-#             if st.form_submit_button(label='Product Selected'):
-#                 # st.session_state["FormSubmitter:edit_form-Product Selected"] = not st.session_state["FormSubmitter:edit_form-Product Selected"]
-#                 filtered_df = df[df['Product'] == option]
-#                 recommender_df = filtered_df['Recommender']
-#                 st.write('Recommender')
-#                 st.write(recommender_df.iloc[0][0])
-#                 st.write(recommender_df.iloc[0][1])
-#                 st.write(recommender_df.iloc[0][2])
-#                 st.write(recommender_df.iloc[0][3])
-#                 st.write(recommender_df.iloc[0][4])
-#     else:
-#         st.write('Find our best sellers of Nintendo')
-
-# st.write(
-#     f"""
-#     ## Session state:
-#     {st.session_state["apple"]=}
-
-#     {st.session_state["samsung"]=}
-
-#     {st.session_state["adidas"]=}
-
-#     {st.session_state["chanel"]=}
-
-#     {st.session_state["nintendo"]=}
-#     {st.session_state}
-#     """
-# )
+        cross_df = df[cols][10:30]
+        cross_styler = cross_df.style.pipe(make_pretty)
+        st.table(cross_styler)
