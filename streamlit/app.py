@@ -9,12 +9,23 @@ st.set_page_config(
     layout="wide", # wide
     initial_sidebar_state="auto") # collapsed
 
+##########################################
+##  Load and Prep Data                  ##
+##########################################
+
 @st.cache
 def load_data():
     df = pd.read_csv('data/top25.csv')
     return df
 
 df = load_data()
+
+brands=['Samsung', 'Apple', 'Huawei', 'LG', 'Lenovo']
+cols = ['product_id','category_code','brand','price', 'price_category']
+
+##########################################
+##  Style and Formatting                ##
+##########################################
 
 hide_table_row_index = """
             <style>
@@ -58,31 +69,13 @@ def make_pretty(styler):
     styler.format(precision=2)
     return styler
 
-def expand_brand(i):
-    expand_brand = st.expander("Best sellers of {}".format(brands[i]), expanded=False)
-    with expand_brand:
-        product = st.selectbox("Find the best sellers of {}:".format(brands[i]), df[df.brand==brands[i].lower()].product_id)
-        st.write(f'''
-            ###### <div style="text-align: center"> According to our model, </span> </div>
 
 
-            ###### <div style="text-align: center"> <span style="color:indianred">[{product}] </span> is one of the Best sellers of <span style="color:indianred">  {brands[i]} </span> in 2020-2021.</span> </div>
-            ''', unsafe_allow_html=True)
-        col1_1,col1_2,col1_3=st.columns(3)
-        with col1_1:
-            st.write('')
 
-        with col1_2:
-            st.image(f'data/{df[df.product_id==product].metadata.tolist()[0]}.png')
+##########################################
+##  Title, Tabs, and Sidebar            ##
+##########################################
 
-        with col1_3:
-            st.write('')
-
-        styler_product = df[df.product_id == product][cols].style.pipe(make_pretty)
-
-        return st.table(styler_product)
-
-#Home page of the app
 st.title("Let's go shopping!")
 st.markdown('''##### <span style="color:gray">Predict consumer preference and recommend related products</span>
             ''', unsafe_allow_html=True)
@@ -129,19 +122,60 @@ with tab_start:
     st.markdown('Contributors: Christian Jergen,Héléna Antoniadis, Zhenghan Hu')
     st.markdown('Supervisors: Julio Quintana, Lorcan Rae')
 
-with tab_samsung:
-    expand_brand(0)
 
-###################
+##########################################
+## Tab                                  ##
+##########################################
+
+def expand_brand(i):
+    expand_brand = st.expander("Best sellers of {}".format(brands[i]), expanded=False)
+    with expand_brand:
+        product = st.selectbox("Find the best sellers of {}:".format(brands[i]), df[df.brand==brands[i].lower()].product_id)
+        st.write(f'''
+            ###### <div style="text-align: center"> According to our model, </span> </div>
+
+
+            ###### <div style="text-align: center"> <span style="color:indianred">[{product}] </span> is one of the Best sellers of <span style="color:indianred">  {brands[i]} </span> in 2020-2021.</span> </div>
+            ''', unsafe_allow_html=True)
+        col1_1,col1_2,col1_3=st.columns(3)
+        with col1_1:
+            st.write('')
+
+        with col1_2:
+            st.image(f'data/{df[df.product_id==product].metadata.tolist()[0]}.png')
+
+        with col1_3:
+            st.write('')
+
+        styler_product = df[df.product_id == product][cols].style.pipe(make_pretty)
+
+        return st.table(styler_product)
+
+
+def expand_similarity():
     expand_similarity = st.expander("Similar recommender you maybe like")
     with expand_similarity:
+        slider1, slider2 = st.columns([4,10])
+        with slider1:
+            num_entries = st.slider('Number of recommenders to show:', 0, 10, 5, step =5)
+        with slider2:
+            st.write('')
         st.write(f'''
                 ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
                 ''', unsafe_allow_html=True)
 
-        recommend_df = df[cols][:10]
+        recommend_df = df[cols][:num_entries]
         recommend_styler = recommend_df.style.pipe(make_pretty)
-        st.table(recommend_styler)
+        return st.table(recommend_styler)
+
+
+with tab_samsung:
+    expand_brand(0)
+
+###################
+
+    expand_similarity()
+
 
 ###################
     expand_cross = st.expander("Crossed products recommender")
