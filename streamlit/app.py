@@ -15,7 +15,7 @@ st.set_page_config(
 
 @st.cache
 def load_data():
-    df = pd.read_csv('data_streamlit/top25.csv')
+    df = pd.read_csv('top25.csv')
     return df
 
 df = load_data()
