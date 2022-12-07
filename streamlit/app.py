@@ -155,6 +155,8 @@ def expand_brand(i):
 def expand_similarity():
     expand_similarity = st.expander("Similar recommender you maybe like")
     with expand_similarity:
+
+        #number slider
         slider1, slider2 = st.columns([4,10])
         with slider1:
             num_entries = st.slider('Number of recommenders to show:', 0, 10, 5, step =5)
@@ -164,9 +166,22 @@ def expand_similarity():
                 ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
                 ''', unsafe_allow_html=True)
 
+        #select the recommender to check the crossed recommended pruducts
         recommend_df = df[cols][:num_entries]
+        recommender = st.selectbox("Select the product you're interested:", recommend_df.product_id)
+
         recommend_styler = recommend_df.style.pipe(make_pretty)
-        return st.table(recommend_styler)
+        st.table(recommend_styler)
+
+        st.write(f'''
+                ##### <div style="text-align: center"> According to our model, you maybe also like these: </span> </div>
+                ##### <div style="text-align: center"> Crossed products recommender: </span> </div>
+                ''', unsafe_allow_html=True)
+
+        cross_df = df[df.product_id == recommender][cols][:10]
+        cross_styler = cross_df.style.pipe(make_pretty)
+        st.table(cross_styler)
+
 
 
 with tab_samsung:
@@ -178,15 +193,7 @@ with tab_samsung:
 
 
 ###################
-    expand_cross = st.expander("Crossed products recommender")
-    with expand_cross:
-        st.write(f'''
-                ##### <div style="text-align: center"> According to our model, you maybe also like these: </span> </div>
-                ''', unsafe_allow_html=True)
 
-        cross_df = df[cols][10:30]
-        cross_styler = cross_df.style.pipe(make_pretty)
-        st.table(cross_styler)
 
 with tab_apple:
     expand_brand(1)
