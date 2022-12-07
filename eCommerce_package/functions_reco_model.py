@@ -1,11 +1,28 @@
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 import numpy as np
+from google.cloud import storage
+import streamlit as st
 
-def get_data_2():
-    path_df1 = './data/Oct19_20/latent_df_1_with_100pct_data_50_svd_components_oct19.csv'
-    path_df2 = './data/Oct19_20/latent_df_2_with_100pct_data_100_svd_components_oct19.csv'
-    path_df3 = './data/Oct19_20/df_concat.csv'
+BUCKET_NAME = 'ecommerce-lewagon-london' #keep the bucket name unchanged
+@st.experimental_memo
+def get_data_2(local=True):
+    if local:
+        path_df1 = './data/Oct19_20/latent_df_1_with_100pct_data_50_svd_components_oct19.csv'
+        path_df2 = './data/Oct19_20/latent_df_2_with_100pct_data_100_svd_components_oct19.csv'
+        path_df3 = './data/Oct19_20/df_concat.csv'
+    else:
+    # Add Client() here
+        client = storage.Client()
+        path_df1 = f"gs://{BUCKET_NAME}/latent_df_1_with_100pct_data_50_svd_components_oct19.csv"
+        path_df2 = f'gs://{BUCKET_NAME}/latent_df_2_with_100pct_data_100_svd_components_oct19.csv'
+        path_df3 = f'gs://{BUCKET_NAME}/df_concat.csv'
+        # client = bigquery.Client()
+        # dataset_ref = bigquery.DatasetReference(project, dataset_id)
+        # table_ref = dataset_ref.table("shakespeare")
+        # table = client.get_table(table_ref)
+        # df = client.list_rows(table).to_dataframe()
+
     df_1 = pd.read_csv(path_df1,index_col=[0])
     df_2 = pd.read_csv(path_df2,index_col=[0])
     meta_df = pd.read_csv(path_df3, index_col=[0])
