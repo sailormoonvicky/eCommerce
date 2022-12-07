@@ -1,7 +1,6 @@
 import streamlit as st
 from PIL import Image
 import pandas as pd
-import numpy as np
 
 from eCommerce_package.functions_reco_model import get_data_2, recommendation_model, top_n_products
 
@@ -14,6 +13,7 @@ st.set_page_config(
 ##########################################
 ##  Load and Prep Data                  ##
 ##########################################
+df_1, df_2, meta_df = get_data_2(local=False)
 
 @st.cache
 def load_data():
@@ -71,16 +71,14 @@ def make_pretty(styler):
     styler.format(precision=2)
     return styler
 
-
-
-
 ##########################################
 ##  Title, Tabs, and Sidebar            ##
 ##########################################
 
-st.title("Let's go shopping!")
-st.markdown('''##### <span style="color:gray">Predict consumer preference and recommend related products</span>
+st.title("Let's start your shopping journey!")
+st.markdown('''##### <span style="color:gray">Our 5 most popular brands</span>
             ''', unsafe_allow_html=True)
+st.write('')
 
 cols_1, cols_2, cols_3 = st.sidebar.columns([1,8,1])
 with cols_1:
@@ -91,49 +89,43 @@ with cols_3:
     st.write("")
 
 st.sidebar.markdown(" ## About eCommerce Recommender")
-st.sidebar.markdown("1️⃣ model based on cusumer preference places 16k+ products into 3000+ brands buckets.")
-st.sidebar.markdown('2️⃣ model finds the feature based similar produts to each single product.')
-st.sidebar.markdown('3️⃣ model predicts the most suitable corssed products of each single.')
-st.sidebar.markdown('Contributors: Christian Jergen,Héléna Antoniadis, Zhenghan Hu')
+st.sidebar.markdown('''1️⃣ <span style="font-weight:bold">Catch attention</span>''', unsafe_allow_html=True)
+st.sidebar.markdown("    Display best seller products for popular brands")
+st.sidebar.markdown('''2️⃣ <span style="font-weight:bold">Facilitate choice</span>''', unsafe_allow_html=True)
+st.sidebar.markdown("    Provide relevant and meaningful selection of products")
+st.sidebar.markdown('3️⃣ <span style="font-weight:bold">Enrich basket</span>', unsafe_allow_html=True)
+st.sidebar.markdown("    Identify cross selling product option")
+st.sidebar.markdown('Contributors: Zhenghan Hu, Héléna Antoniadis, Christian Jergen')
 st.sidebar.markdown('Supervisors: Julio Quintana, Lorcan Rae')
 st.sidebar.info("Read more about how the model works and see the code on our [Github](https://github.com/sailormoonvicky/eCommerce).", icon="ℹ️")
 
 col1, col2,col3, col4, col5 = st.columns(5)
 
-tab_start, tab_samsung, tab_apple, tab_huawei, tab_lg, tab_lenovo = st.tabs(['Start', 'Samsung', 'Apple', 'Huawei', 'LG', 'Lenovo'])
+st.write('')
+tab_start, tab_samsung, tab_apple, tab_huawei, tab_lg, tab_lenovo, tab_cross = st.tabs(['Start', 'Samsung', 'Apple', 'Huawei', 'LG', 'Lenovo', 'Enrich Basket'])
 with col1:
     image = Image.open('data_streamlit/{}.png'.format(brands[0]))
-    st.image(image, caption='{}'.format(brands[0]))
+    st.image(image)#, caption='{}'.format(brands[0]))
 
 with col2:
     image = Image.open('data_streamlit/{}.png'.format(brands[1]))
-    st.image(image, caption='{}'.format(brands[1]))
+    st.image(image)
 
 with col3:
     image = Image.open('data_streamlit/{}.png'.format(brands[2]))
-    st.image(image, caption='{}'.format(brands[2]))
+    st.image(image)
 
 with col4:
     image = Image.open('data_streamlit/{}.png'.format(brands[3]))
-    st.image(image, caption='{}'.format(brands[3]))
+    st.image(image)
 
 with col5:
     image = Image.open('data_streamlit/{}.png'.format(brands[4]))
-    st.image(image, caption='{}'.format(brands[4]))
+    st.image(image)
 
 with tab_start:
     st.write('')
-    st.write('''## <div style="text-align: center; font:font:Lucida Console bold 30px/30px 'Courier New', monospace"> We’re ready to make this Christmas your jolliest yet. Welcome to our shopping wonderland. </span> </div>''', unsafe_allow_html=True)
-    st.write('')
-    col_s1, col_s2,col_s3 = st.columns([1,8,1])
-    with col_s1:
-        st.write('')
 
-    with col_s2:
-        st.image(Image.open('data_streamlit/welcome.png'))
-
-    with col_s3:
-        st.write('')
 
 
 ##########################################
@@ -144,8 +136,10 @@ def expand_brand(i):
     st.write(f'''
             ###### <div style="text-align: center"> Top 5 products of <span style="color:indianred"> {brands[i]} </span> : </span> </div>
             ''', unsafe_allow_html=True)
-
-    st.table(df[df.brand==brands[i].lower()][cols].style.pipe(make_pretty))
+    brand_df = df[df.brand==brands[i].lower()][cols]
+    brand_df.rename(columns={'category_code': 'Description', 'brand':'Brand','product_id':'Product ID', 'price':'Price', 'price_category':'Price category'}, inplace=True)
+    brand_df.Brand=brand_df.Brand.apply(lambda x: x.upper())
+    st.table(brand_df.style.pipe(make_pretty))
 
     st.write("Continue to find more details")
 
@@ -171,13 +165,12 @@ def expand_brand(i):
                 ''', unsafe_allow_html=True)
 
         #load recommendation model
-        df_1, df_2, meta_df = get_data_2()
         rec_df = recommendation_model(product, df_1, df_2, meta_df, weight_features = 0.8)
-        cross_df = top_n_products(rec_df, meta_df, n=10, ranking='features')
-        cross_df.rename(columns={'meta_text': 'description'}, inplace=True)
+        rec_df = top_n_products(rec_df, meta_df, n=10, ranking='features')
+        rec_df.rename(columns={'meta_text': 'description'}, inplace=True)
 
-        cross_styler = cross_df.style.pipe(make_pretty)
-        st.table(cross_styler)
+        rec_styler = rec_df.style.pipe(make_pretty)
+        st.table(rec_styler)
 
 
 with tab_samsung:
@@ -194,3 +187,13 @@ with tab_lg:
 
 with tab_lenovo:
     expand_brand(4)
+
+with tab_cross:
+    df_x_seller = pd.read_csv('x_seller.csv')
+    st.write(f'''
+            ###### <div style="text-align: center"> Based on your previous purchase, you may like one of the products below: </span> </div>
+            ''', unsafe_allow_html=True)
+    c_product = st.selectbox("Select the product you're interested in:", df_x_seller.product_1)
+    cros_df = df_x_seller[df_x_seller['product_1']==c_product][['product_1','price_1','metadata_1','product_2','price_2','metadata_2']]
+    cros_df.rename(columns={'product_1':'target product', 'product_2': 'recommend product', 'price_1':'target price', 'price_2': 'recommender price', 'metadata_1':'target description','metadata_2':'recommender description' }, inplace=True)
+    st.table(cros_df.style.pipe(make_pretty))

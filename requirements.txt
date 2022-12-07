@@ -4,3 +4,6 @@ scikit-learn
 matplotlib
 streamlit
 Pillow
+google.cloud
+s3fs
+gcsfs
