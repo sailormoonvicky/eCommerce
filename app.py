@@ -3,6 +3,8 @@ from PIL import Image
 import pandas as pd
 import numpy as np
 
+from eCommerce_package.functions_reco_model import get_data_2, recommendation_model, top_n_products
+
 st.set_page_config(
     page_title="eCommerce Rercommender", # => The title
     page_icon="🛒",
@@ -129,6 +131,7 @@ with tab_start:
 
 def expand_brand(i):
     expand_brand = st.expander("Best sellers of {}".format(brands[i]), expanded=False)
+
     with expand_brand:
         product = st.selectbox("Find the best sellers of {}:".format(brands[i]), df[df.brand==brands[i].lower()].product_id)
         st.write(f'''
@@ -147,151 +150,34 @@ def expand_brand(i):
         with col1_3:
             st.write('')
 
+        # Lonely table with one product
         styler_product = df[df.product_id == product][cols].style.pipe(make_pretty)
+        st.table(styler_product)
 
-        return st.table(styler_product)
 
-
-def expand_similarity():
-    expand_similarity = st.expander("Similar recommender you maybe like")
-    with expand_similarity:
-
-        #number slider
-        slider1, slider2 = st.columns([4,10])
-        with slider1:
-            num_entries = st.slider('Number of recommenders to show:', 0, 10, 5, step =5)
-        with slider2:
-            st.write('')
         st.write(f'''
                 ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
                 ''', unsafe_allow_html=True)
 
-        #select the recommender to check the crossed recommended pruducts
-        recommend_df = df[cols][:num_entries]
-        recommender = st.selectbox("Select the product you're interested:", recommend_df.product_id)
+        df_1, df_2, meta_df = get_data_2()
+        rec_df = recommendation_model(product, df_1, df_2, meta_df, weight_features = 0.8)
+        cross_df = top_n_products(rec_df, meta_df, n=10, ranking='features')
 
-        recommend_styler = recommend_df.style.pipe(make_pretty)
-        st.table(recommend_styler)
-
-        st.write(f'''
-                ##### <div style="text-align: center"> According to our model, you maybe also like these: </span> </div>
-                ##### <div style="text-align: center"> Crossed products recommender: </span> </div>
-                ''', unsafe_allow_html=True)
-
-        cross_df = df[df.product_id == recommender][cols][:10]
         cross_styler = cross_df.style.pipe(make_pretty)
         st.table(cross_styler)
-
 
 
 with tab_samsung:
     expand_brand(0)
 
-###################
-
-    expand_similarity()
-
-
-###################
-
-
 with tab_apple:
     expand_brand(1)
-
-###################
-    expand_similarity = st.expander("Similar recommender you maybe like")
-    with expand_similarity:
-        st.write(f'''
-                ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
-                ''', unsafe_allow_html=True)
-
-        recommend_df = df[cols][:10]
-        recommend_styler = recommend_df.style.pipe(make_pretty)
-        st.table(recommend_styler)
-
-###################
-    expand_cross = st.expander("Crossed products recommender")
-    with expand_cross:
-        st.write(f'''
-                ##### <div style="text-align: center"> According to our model, you maybe also like these: </span> </div>
-                ''', unsafe_allow_html=True)
-
-        cross_df = df[cols][10:30]
-        cross_styler = cross_df.style.pipe(make_pretty)
-        st.table(cross_styler)
 
 with tab_huawei:
     expand_brand(2)
 
-###################
-    expand_similarity = st.expander("Similar recommender you maybe like")
-    with expand_similarity:
-        st.write(f'''
-                ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
-                ''', unsafe_allow_html=True)
-
-        recommend_df = df[cols][:10]
-        recommend_styler = recommend_df.style.pipe(make_pretty)
-        st.table(recommend_styler)
-
-###################
-    expand_cross = st.expander("Crossed products recommender")
-    with expand_cross:
-        st.write(f'''
-                ##### <div style="text-align: center"> According to our model, you maybe also like these: </span> </div>
-                ''', unsafe_allow_html=True)
-
-        cross_df = df[cols][10:30]
-        cross_styler = cross_df.style.pipe(make_pretty)
-        st.table(cross_styler)
-
-
 with tab_lg:
     expand_brand(3)
 
-###################
-    expand_similarity = st.expander("Similar recommender you maybe like")
-    with expand_similarity:
-        st.write(f'''
-                ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
-                ''', unsafe_allow_html=True)
-
-        recommend_df = df[cols][:10]
-        recommend_styler = recommend_df.style.pipe(make_pretty)
-        st.table(recommend_styler)
-
-###################
-    expand_cross = st.expander("Crossed products recommender")
-    with expand_cross:
-        st.write(f'''
-                ##### <div style="text-align: center"> According to our model, you maybe also like these: </span> </div>
-                ''', unsafe_allow_html=True)
-
-        cross_df = df[cols][10:30]
-        cross_styler = cross_df.style.pipe(make_pretty)
-        st.table(cross_styler)
-
 with tab_lenovo:
     expand_brand(4)
-
-###################
-    expand_similarity = st.expander("Similar recommender you maybe like")
-    with expand_similarity:
-        st.write(f'''
-                ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
-                ''', unsafe_allow_html=True)
-
-        recommend_df = df[cols][:10]
-        recommend_styler = recommend_df.style.pipe(make_pretty)
-        st.table(recommend_styler)
-
-###################
-    expand_cross = st.expander("Crossed products recommender")
-    with expand_cross:
-        st.write(f'''
-                ##### <div style="text-align: center"> According to our model, you maybe also like these: </span> </div>
-                ''', unsafe_allow_html=True)
-
-        cross_df = df[cols][10:30]
-        cross_styler = cross_df.style.pipe(make_pretty)
-        st.table(cross_styler)
