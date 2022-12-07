@@ -1,0 +1,26 @@
+,index,product_id,event_time,event_type,category_id,category_code,brand,price,user_id,user_session,25%,75%,price_category,rating,metadata
+0,0,1307366,2019-10-01 02:38:03 UTC,view,2053013558920217191,computers notebook,lenovo,248.62,532340721,e7613958-fa9a-4dba-a199-7e611fac38c6,360.34,873.61,low,1,computers notebook lenovo low
+1,2740,1307067,2019-10-01 02:20:03 UTC,view,2053013558920217191,computers notebook,lenovo,251.74,541316253,d15e32ab-efb2-4232-a646-0492a50d2fe1,360.34,873.61,low,1,computers notebook lenovo low
+2,4618,1307004,2019-10-01 00:30:16 UTC,view,2053013558920217191,computers notebook,lenovo,290.61,551508458,eb9a8d4b-da50-43c5-b2c2-21fe9487a175,360.34,873.61,low,1,computers notebook lenovo low
+3,6228,1307237,2019-10-01 07:18:29 UTC,view,2053013558920217191,computers notebook,lenovo,257.38,513225144,b01b12bb-3bee-412e-abe4-d40ef9e570f7,360.34,873.61,low,1,computers notebook lenovo low
+4,7101,1307377,2019-10-01 02:51:52 UTC,view,2053013558920217191,computers notebook,lenovo,432.42,519309066,d60c7cf6-dc82-4776-a920-6cdbd1f22c2d,360.34,873.61,medium,1,computers notebook lenovo medium
+5,7976,1005115,2019-10-01 00:03:33 UTC,view,2053013555631882655,electronics smartphone,apple,975.57,514218020,d7c4761f-de75-454b-9164-177db5e53695,179.26,722.4,high,1,electronics smartphone apple high
+6,43348,4804056,2019-10-01 00:09:24 UTC,view,2053013554658804075,electronics audio headphone,apple,161.98,551377651,3c80f0d6-e9ec-4181-8c5c-837a30be2d68,25.71,160.88,high,1,electronics audio headphone apple high
+7,64653,1004249,2019-10-01 00:02:02 UTC,view,2053013555631882655,electronics smartphone,apple,739.81,512539408,3e686589-9b0c-4db0-9b75-3f2738583e75,179.26,722.4,high,1,electronics smartphone apple high
+8,87845,1002544,2019-10-01 02:17:13 UTC,view,2053013555631882655,electronics smartphone,apple,464.13,515544667,f619453a-5696-43ba-8cd5-3752e31d811d,179.26,722.4,medium,1,electronics smartphone apple medium
+9,108369,1005105,2019-10-01 01:26:45 UTC,view,2053013555631882655,electronics smartphone,apple,1415.48,554832778,e71b31e8-623c-430b-a5b4-4c3089a77195,179.26,722.4,high,1,electronics smartphone apple high
+10,129798,1004856,2019-10-01 00:01:17 UTC,view,2053013555631882655,electronics smartphone,samsung,130.76,515757896,4938043e-e50f-44ad-944d-958d04df62d6,179.26,722.4,low,1,electronics smartphone samsung low
+11,179335,1004767,2019-10-01 00:02:15 UTC,view,2053013555631882655,electronics smartphone,samsung,254.82,551417808,3f2209fb-0fe6-4093-8486-51e52dbda8cf,179.26,722.4,medium,1,electronics smartphone samsung medium
+12,223391,1004833,2019-10-01 02:23:16 UTC,view,2053013555631882655,electronics smartphone,samsung,174.76,550422448,f9e45568-7f95-4367-8383-7dfdbd5c1791,179.26,722.4,low,1,electronics smartphone samsung low
+13,247278,1004870,2019-10-01 02:19:38 UTC,view,2053013555631882655,electronics smartphone,samsung,286.86,512740727,20e584bf-6461-4940-a774-1ff1110c633b,179.26,722.4,medium,1,electronics smartphone samsung medium
+14,269296,1004836,2019-10-01 00:01:11 UTC,view,2053013555631882655,electronics smartphone,samsung,241.19,546259103,6e2984c8-502e-4fe7-bbba-34087f760175,179.26,722.4,medium,1,electronics smartphone samsung medium
+15,285734,1004785,2019-10-01 02:17:23 UTC,view,2053013555631882655,electronics smartphone,huawei,278.55,518908920,0b131d55-5abd-48c1-99a2-68e503feaf3f,179.26,722.4,medium,1,electronics smartphone huawei medium
+16,298326,1004565,2019-10-01 02:33:47 UTC,view,2053013555631882655,electronics smartphone,huawei,177.47,530283626,8b05186d-5860-476e-b0ad-0aa1a894b5d1,179.26,722.4,low,1,electronics smartphone huawei low
+17,309549,1004781,2019-10-01 02:55:57 UTC,view,2053013555631882655,electronics smartphone,huawei,278.31,555467283,a2290f4e-ea31-4b09-ab8a-67adfeccd98e,179.26,722.4,medium,1,electronics smartphone huawei medium
+18,316066,1004903,2019-10-01 02:45:56 UTC,view,2053013555631882655,electronics smartphone,huawei,111.82,548338096,8d6dcc82-27e6-4f8f-a960-852753403c24,179.26,722.4,low,1,electronics smartphone huawei low
+19,322133,1004708,2019-10-01 02:50:14 UTC,purchase,2053013555631882655,electronics smartphone,huawei,159.77,555354998,28375945-d0bc-4051-81c3-ea4c58cc1f68,179.26,722.4,low,5,electronics smartphone huawei low
+20,327324,2702277,2019-10-01 02:20:45 UTC,view,2053013563911439225,appliances kitchen refrigerators,lg,465.7,516192290,7f7042da-1c91-4bd4-bef2-4c014e3c3014,240.74,514.79,medium,1,appliances kitchen refrigerators lg medium
+21,330210,3601485,2019-10-01 02:34:23 UTC,purchase,2053013563810775923,appliances kitchen washer,lg,308.65,513419646,5e227e58-6117-419c-b45d-ac54be44716d,208.22,386.08,medium,5,appliances kitchen washer lg medium
+22,332874,3601244,2019-10-01 02:49:47 UTC,view,2053013563810775923,appliances kitchen washer,lg,339.75,538018226,b79aba71-365f-4179-aa6f-0e0d62162cd5,208.22,386.08,medium,1,appliances kitchen washer lg medium
+23,335518,3601437,2019-10-01 03:22:39 UTC,view,2053013563810775923,appliances kitchen washer,lg,380.85,524089350,6fecac06-b07b-4f09-8c9a-da3d1cd2b5e7,208.22,386.08,medium,1,appliances kitchen washer lg medium
+24,337931,1802037,2019-10-01 03:59:34 UTC,view,2053013554415534427,electronics video tv,lg,303.45,518500356,b43a1ad2-4967-4fc5-a0ad-28b07235005c,218.54,496.47,medium,1,electronics video tv lg medium

@@ -15,7 +15,7 @@ st.set_page_config(
 
 @st.cache
 def load_data():
-    df = pd.read_csv('data/top25.csv')
+    df = pd.read_csv('data_streamlit/top25.csv')
     return df
 
 df = load_data()
@@ -84,7 +84,7 @@ cols_1, cols_2, cols_3 = st.sidebar.columns([1,8,1])
 with cols_1:
     st.write("")
 with cols_2:
-    st.image('data/ecommerce.png',  use_column_width=True)
+    st.image('data_streamlit/ecommerce.png',  use_column_width=True)
 with cols_3:
     st.write("")
 
@@ -98,23 +98,23 @@ col1, col2,col3, col4, col5 = st.columns(5)
 
 tab_start, tab_samsung, tab_apple, tab_huawei, tab_lg, tab_lenovo = st.tabs(['Start', 'Samsung', 'Apple', 'Huawei', 'LG', 'Lenovo'])
 with col1:
-    image = Image.open('data/{}.png'.format(brands[0]))
+    image = Image.open('data_streamlit/{}.png'.format(brands[0]))
     st.image(image, caption='{}'.format(brands[0]))
 
 with col2:
-    image = Image.open('data/{}.png'.format(brands[1]))
+    image = Image.open('data_streamlit/{}.png'.format(brands[1]))
     st.image(image, caption='{}'.format(brands[1]))
 
 with col3:
-    image = Image.open('data/{}.png'.format(brands[2]))
+    image = Image.open('data_streamlit/{}.png'.format(brands[2]))
     st.image(image, caption='{}'.format(brands[2]))
 
 with col4:
-    image = Image.open('data/{}.png'.format(brands[3]))
+    image = Image.open('data_streamlit/{}.png'.format(brands[3]))
     st.image(image, caption='{}'.format(brands[3]))
 
 with col5:
-    image = Image.open('data/{}.png'.format(brands[4]))
+    image = Image.open('data_streamlit/{}.png'.format(brands[4]))
     st.image(image, caption='{}'.format(brands[4]))
 
 with tab_start:
@@ -142,7 +142,7 @@ def expand_brand(i):
             st.write('')
 
         with col1_2:
-            st.image(f'data/{df[df.product_id==product].metadata.tolist()[0]}.png')
+            st.image(f'data_streamlit/{df[df.product_id==product].metadata.tolist()[0]}.png')
 
         with col1_3:
             st.write('')
