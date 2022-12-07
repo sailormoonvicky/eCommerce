@@ -130,15 +130,20 @@ with tab_start:
 ##########################################
 
 def expand_brand(i):
-    expand_brand = st.expander("Best sellers of {}".format(brands[i]), expanded=False)
+    st.write(f'''
+            ###### <div style="text-align: center"> Top 5 products of <span style="color:indianred"> {brands[i]} </span> : </span> </div>
+            ''', unsafe_allow_html=True)
+
+    st.table(df[df.brand==brands[i].lower()][cols].style.pipe(make_pretty))
+
+    st.write("Continue to find more details")
+
+    expand_brand = st.expander("Find the best sellers of {}:".format(brands[i]), expanded=False)
 
     with expand_brand:
-        product = st.selectbox("Find the best sellers of {}:".format(brands[i]), df[df.brand==brands[i].lower()].product_id)
+        product = st.selectbox('Select:', df[df.brand==brands[i].lower()].product_id)
         st.write(f'''
-            ###### <div style="text-align: center"> According to our model, </span> </div>
-
-
-            ###### <div style="text-align: center"> <span style="color:indianred">[{product}] </span> is one of the Best sellers of <span style="color:indianred">  {brands[i]} </span> in 2020-2021.</span> </div>
+            ###### <div style="text-align: center"> This product is one of the best sellers of <span style="color:indianred">  {brands[i]} </span> in 2020-2021.</span> </div>
             ''', unsafe_allow_html=True)
         col1_1,col1_2,col1_3=st.columns(3)
         with col1_1:
@@ -151,17 +156,18 @@ def expand_brand(i):
             st.write('')
 
         # Lonely table with one product
-        styler_product = df[df.product_id == product][cols].style.pipe(make_pretty)
-        st.table(styler_product)
+        # styler_product = df[df.product_id == product][cols].style.pipe(make_pretty)
+        # st.table(styler_product)
 
 
         st.write(f'''
-                ##### <div style="text-align: center"> According to our model, you maybe like these: </span> </div>
+                ##### <div style="text-align: center"> Based on your selection, you may like the following products:: </span> </div>
                 ''', unsafe_allow_html=True)
 
         df_1, df_2, meta_df = get_data_2()
         rec_df = recommendation_model(product, df_1, df_2, meta_df, weight_features = 0.8)
         cross_df = top_n_products(rec_df, meta_df, n=10, ranking='features')
+        # cross_df = cross_df.rename(columns={'meta_text': 'description'}, inplace=True)
 
         cross_styler = cross_df.style.pipe(make_pretty)
         st.table(cross_styler)
