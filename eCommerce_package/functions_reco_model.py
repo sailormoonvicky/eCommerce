@@ -3,9 +3,9 @@ import pandas as pd
 import numpy as np
 
 def get_data_2():
-    path_df1 = '../data/Oct19_20/latent_df_1_with_100pct_data_50_svd_components_oct19.csv'
-    path_df2 = '../data/Oct19_20/latent_df_2_with_100pct_data_100_svd_components_oct19.csv'
-    path_df3 = '../data/Oct19_20/X_meta_with_100pct_data_oct19.csv'
+    path_df1 = './data/latent_dfs/latent_df_1_with_100pct_data_50_svd_components_oct19.csv'
+    path_df2 = './data/latent_dfs/latent_df_2_with_100pct_data_100_svd_components_oct19.csv'
+    path_df3 = './data/latent_dfs/X_meta_with_100pct_data_oct19.csv'
     df_1 = pd.read_csv(path_df1,index_col=[0])
     df_2 = pd.read_csv(path_df2,index_col=[0])
     meta_df = pd.read_csv(path_df3, index_col=[0])
@@ -66,14 +66,18 @@ def top_n_products(rec_df, meta_df, n=10, ranking='hybrid'):
 
 if __name__ == '__main__':
     try:
-        # 1003363 1002544
-        product_id= 1000978
+        top25 = pd.read_csv("./data/top25.csv")
         df_1, df_2, meta_df = get_data_2()
-        # print("Starting recommendation model")
-        rec_df = recommendation_model(product_id, df_1, df_2, weight_features = 0.8)
-        # print("Starting product sorting")
-        new_df = top_n_products(rec_df, meta_df, n=10, ranking='features')
-        # print(new_df.head())
+
+        for product_id in top25['product_id'].to_list():
+          print(f"Starting recommendation model for product {product_id}")
+          rec_df = recommendation_model(product_id, df_1, df_2, weight_features = 0.8)
+
+          print("Starting product sorting")
+          new_df = top_n_products(rec_df, meta_df, n=10, ranking='hybrid')
+
+          print(f"Saving {product_id} to csv")
+          new_df.to_csv(f"./data/top25_dfs/{product_id}.csv")
 
     except:
         import ipdb, traceback, sys
