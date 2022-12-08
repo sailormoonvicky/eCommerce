@@ -128,10 +128,9 @@ with col5:
 
 st.write('')
 st.write('')
-whitespace = 8
+whitespace = 10
 ## Fills and centers each tab label with em-spaces
-listTabs = ['Start', 'Samsung', 'Apple', 'Huawei', 'LG', 'Lenovo', 'Enrich Basket']
-#tabs = st.tabs([s.center(whitespace,"\u2001") for s in listTabs])
+listTabs = ['Start', 'Samsung', 'Apple', 'Huawei', 'LG', 'Lenovo','Enrich Basket']
 tab_start, tab_samsung, tab_apple, tab_huawei, tab_lg, tab_lenovo, tab_cross = st.tabs([s.center(whitespace,"\u2001") for s in listTabs])
 
 
