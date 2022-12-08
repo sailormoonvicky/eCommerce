@@ -12,9 +12,16 @@ def get_data_2(local=True):
         path_df1 = './data/Oct19_20/latent_df_1_with_100pct_data_50_svd_components_oct19.csv'
         path_df2 = './data/Oct19_20/latent_df_2_with_100pct_data_100_svd_components_oct19.csv'
         path_df3 = './data/Oct19_20/df_concat.csv'
+
+        df_1 = pd.read_csv(path_df1,index_col=[0])
+        df_2 = pd.read_csv(path_df2,index_col=[0])
+        meta_df = pd.read_csv(path_df3, index_col=[0])
     else:
     # Add Client() here
         # Create API client.
+        credentials = service_account.Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"]
+        )
         path_df1 = f"gcs://{BUCKET_NAME}/latent_df_1_with_100pct_data_50_svd_components_oct19.csv"
         path_df2 = f'gcs://{BUCKET_NAME}/latent_df_2_with_100pct_data_100_svd_components_oct19.csv'
         path_df3 = f'gcs://{BUCKET_NAME}/df_concat.csv'
@@ -24,9 +31,9 @@ def get_data_2(local=True):
         # table = client.get_table(table_ref)
         # df = client.list_rows(table).to_dataframe()
 
-    df_1 = pd.read_csv(path_df1,index_col=[0])
-    df_2 = pd.read_csv(path_df2,index_col=[0])
-    meta_df = pd.read_csv(path_df3, index_col=[0])
+        df_1 = pd.read_csv(path_df1, storage_options={"token":credentials}, index_col=[0])
+        df_2 = pd.read_csv(path_df2, storage_options={"token":credentials}, index_col=[0])
+        meta_df = pd.read_csv(path_df3, storage_options={"token":credentials}, index_col=[0])
     return (df_1, df_2, meta_df)
 
 def recommendation_model(product_id, df_1, df_2, meta_df, weight_features = 0.8):
