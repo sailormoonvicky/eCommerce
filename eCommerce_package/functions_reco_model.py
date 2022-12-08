@@ -2,6 +2,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 import numpy as np
 from google.cloud import storage
+from google.oauth2 import service_account
 import streamlit as st
 
 BUCKET_NAME = 'ecommerce-lewagon-london' #keep the bucket name unchanged
@@ -13,7 +14,11 @@ def get_data_2(local=True):
         path_df3 = './data/Oct19_20/df_concat.csv'
     else:
     # Add Client() here
-        client = storage.Client()
+        # Create API client.
+        credentials = service_account.Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"]
+        )
+        client = storage.Client(credentials=credentials)
         path_df1 = f"gs://{BUCKET_NAME}/latent_df_1_with_100pct_data_50_svd_components_oct19.csv"
         path_df2 = f'gs://{BUCKET_NAME}/latent_df_2_with_100pct_data_100_svd_components_oct19.csv'
         path_df3 = f'gs://{BUCKET_NAME}/df_concat.csv'
