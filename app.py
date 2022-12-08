@@ -211,6 +211,6 @@ with tab_cross:
     st.write('')
     c_product = st.selectbox("Select the product you're interested in:", df_x_seller.product_1)
     cros_df = df_x_seller[df_x_seller['product_1']==c_product][['product_1','price_1','metadata_1','product_2','price_2','metadata_2']]
-    cros_df.rename(columns={'product_1':'Target product', 'product_2': 'Recommender product', 'price_1':'Target price', 'price_2': 'Recommender price', 'metadata_1':'Target description','metadata_2':'Recommender description' }, inplace=True)
+    cros_df.rename(columns={'product_1':'Complementary product', 'product_2': 'Product(cart)', 'price_1':'Price', 'price_2': 'Price(cart)', 'metadata_1':'Description','metadata_2':'Description(cart)' }, inplace=True)
     st.write('')
     st.table(cros_df.style.pipe(make_pretty))
