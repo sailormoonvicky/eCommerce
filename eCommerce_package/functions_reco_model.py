@@ -15,13 +15,9 @@ def get_data_2(local=True):
     else:
     # Add Client() here
         # Create API client.
-        credentials = service_account.Credentials.from_service_account_info(
-            st.secrets["gcp_service_account"]
-        )
-        client = storage.Client(credentials=credentials)
-        path_df1 = f"gs://{BUCKET_NAME}/latent_df_1_with_100pct_data_50_svd_components_oct19.csv"
-        path_df2 = f'gs://{BUCKET_NAME}/latent_df_2_with_100pct_data_100_svd_components_oct19.csv'
-        path_df3 = f'gs://{BUCKET_NAME}/df_concat.csv'
+        path_df1 = f"gcs://{BUCKET_NAME}/latent_df_1_with_100pct_data_50_svd_components_oct19.csv"
+        path_df2 = f'gcs://{BUCKET_NAME}/latent_df_2_with_100pct_data_100_svd_components_oct19.csv'
+        path_df3 = f'gcs://{BUCKET_NAME}/df_concat.csv'
         # client = bigquery.Client()
         # dataset_ref = bigquery.DatasetReference(project, dataset_id)
         # table_ref = dataset_ref.table("shakespeare")
