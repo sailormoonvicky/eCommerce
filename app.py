@@ -45,16 +45,27 @@ center_row_text = """
         td  {text-align: center !important}
     </style>      """
 
+# tabs_font_css = """
+# <style>
+# button[data-baseweb="tab"] {
+#   font-size: 40px;
+# }
+# </style>
+# """
+
+
+
 # Inject CSS with Markdown
 
 st.markdown(hide_table_row_index, unsafe_allow_html=True)
 st.markdown(center_heading_text, unsafe_allow_html=True)
 st.markdown(center_row_text, unsafe_allow_html=True)
+# st.markdown(tabs_font_css, unsafe_allow_html=True)
 
 brands=['Samsung', 'Apple', 'Huawei', 'LG', 'Lenovo']
 cols = ['product_id','category_code','brand','price', 'price_category']
 
-heading_properties = [('font-size', '16px'),('text-align', 'center'),
+heading_properties = [('font-size', '18px'),('text-align', 'center'),
                       ('color', 'white'),  ('font-weight', 'bold'),
                       ('background', 'gray'),('border', '1.2px solid black')]
 
@@ -76,7 +87,7 @@ def make_pretty(styler):
 ##########################################
 
 st.title("Let's start your shopping journey!")
-st.markdown('''##### <span style="color:gray">Our 5 most popular brands</span>
+st.markdown('''##### <span style="color:gray; font-size: 40px;">Our 5 most popular brands</span>
             ''', unsafe_allow_html=True)
 st.write('')
 
@@ -95,17 +106,17 @@ st.sidebar.markdown('''2️⃣ <span style="font-weight:bold">Facilitate choice<
 st.sidebar.markdown("    Provide relevant and meaningful selection of products")
 st.sidebar.markdown('3️⃣ <span style="font-weight:bold">Enrich basket</span>', unsafe_allow_html=True)
 st.sidebar.markdown("    Identify cross selling product option")
+st.sidebar.write('')
 st.sidebar.markdown('Contributors: Zhenghan Hu, Héléna Antoniadis, Christian Jergen')
 st.sidebar.markdown('Supervisors: Julio Quintana, Lorcan Rae')
 st.sidebar.info("Read more about how the model works and see the code on our [Github](https://github.com/sailormoonvicky/eCommerce).", icon="ℹ️")
 
+#Brands logos
 col1, col2,col3, col4, col5 = st.columns(5)
 
-st.write('')
-tab_start, tab_samsung, tab_apple, tab_huawei, tab_lg, tab_lenovo, tab_cross = st.tabs(['Start', 'Samsung', 'Apple', 'Huawei', 'LG', 'Lenovo', 'Enrich Basket'])
 with col1:
     image = Image.open('data_streamlit/{}.png'.format(brands[0]))
-    st.image(image)#, caption='{}'.format(brands[0]))
+    st.image(image)
 
 with col2:
     image = Image.open('data_streamlit/{}.png'.format(brands[1]))
@@ -123,6 +134,15 @@ with col5:
     image = Image.open('data_streamlit/{}.png'.format(brands[4]))
     st.image(image)
 
+st.write('')
+st.write('')
+whitespace = 8
+## Fills and centers each tab label with em-spaces
+listTabs = ['Start', 'Samsung', 'Apple', 'Huawei', 'LG', 'Lenovo', 'Enrich Basket']
+#tabs = st.tabs([s.center(whitespace,"\u2001") for s in listTabs])
+tab_start, tab_samsung, tab_apple, tab_huawei, tab_lg, tab_lenovo, tab_cross = st.tabs([s.center(whitespace,"\u2001") for s in listTabs])
+
+
 with tab_start:
     st.write('')
 
@@ -133,22 +153,24 @@ with tab_start:
 ##########################################
 
 def expand_brand(i):
+    st.write('')
     st.write(f'''
-            ###### <div style="text-align: center"> Top 5 products of <span style="color:indianred"> {brands[i]} </span> : </span> </div>
+            ##### <div style="text-align: center"> Top 5 products of <span style="color:indianred"> {brands[i]} </span> : </span> </div>
             ''', unsafe_allow_html=True)
     brand_df = df[df.brand==brands[i].lower()][cols]
     brand_df.rename(columns={'category_code': 'Description', 'brand':'Brand','product_id':'Product ID', 'price':'Price', 'price_category':'Price category'}, inplace=True)
     brand_df.Brand=brand_df.Brand.apply(lambda x: x.upper())
     st.table(brand_df.style.pipe(make_pretty))
 
-    st.write("Continue to find more details")
+    st.write(f'''<div style="font-size: 20px"> Continue to find more details</span> </div>''', unsafe_allow_html=True)
+    st.write('')
 
     expand_brand = st.expander("Find the best sellers of {}:".format(brands[i]), expanded=False)
 
     with expand_brand:
         product = st.selectbox('Select:', df[df.brand==brands[i].lower()].product_id)
         st.write(f'''
-            ###### <div style="text-align: center"> This product is one of the best sellers of <span style="color:indianred">  {brands[i]} </span> in 2020-2021.</span> </div>
+            ##### <div style="text-align: center"> This product is one of the best sellers of <span style="color:indianred">  {brands[i]} </span> in 2020-2021.</span> </div>
             ''', unsafe_allow_html=True)
         col1_1,col1_2,col1_3=st.columns(3)
         with col1_1:
@@ -160,6 +182,7 @@ def expand_brand(i):
         with col1_3:
             st.write('')
 
+        st.write('')
         st.write(f'''
                 ##### <div style="text-align: center"> Based on your selection, you may like the following products: </span> </div>
                 ''', unsafe_allow_html=True)
@@ -189,11 +212,14 @@ with tab_lenovo:
     expand_brand(4)
 
 with tab_cross:
+    st.write('')
     df_x_seller = pd.read_csv('x_seller.csv')
     st.write(f'''
-            ###### <div style="text-align: center"> Based on your previous purchase, you may like one of the products below: </span> </div>
+            ##### <div style="text-align: center"> Based on your previous purchase, you may like one of the products below: </span> </div>
             ''', unsafe_allow_html=True)
+    st.write('')
     c_product = st.selectbox("Select the product you're interested in:", df_x_seller.product_1)
     cros_df = df_x_seller[df_x_seller['product_1']==c_product][['product_1','price_1','metadata_1','product_2','price_2','metadata_2']]
-    cros_df.rename(columns={'product_1':'target product', 'product_2': 'recommend product', 'price_1':'target price', 'price_2': 'recommender price', 'metadata_1':'target description','metadata_2':'recommender description' }, inplace=True)
+    cros_df.rename(columns={'product_1':'Target product', 'product_2': 'Recommender product', 'price_1':'Target price', 'price_2': 'Recommender price', 'metadata_1':'Target description','metadata_2':'Recommender description' }, inplace=True)
+    st.write('')
     st.table(cros_df.style.pipe(make_pretty))
