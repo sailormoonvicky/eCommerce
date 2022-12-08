@@ -13,6 +13,8 @@ st.set_page_config(
 ##########################################
 ##  Load and Prep Data                  ##
 ##########################################
+
+#select load data from local or gcp bucket
 df_1, df_2, meta_df = get_data_2(local=False)
 
 @st.cache
@@ -45,22 +47,12 @@ center_row_text = """
         td  {text-align: center !important}
     </style>      """
 
-# tabs_font_css = """
-# <style>
-# button[data-baseweb="tab"] {
-#   font-size: 40px;
-# }
-# </style>
-# """
-
-
 
 # Inject CSS with Markdown
 
 st.markdown(hide_table_row_index, unsafe_allow_html=True)
 st.markdown(center_heading_text, unsafe_allow_html=True)
 st.markdown(center_row_text, unsafe_allow_html=True)
-# st.markdown(tabs_font_css, unsafe_allow_html=True)
 
 brands=['Samsung', 'Apple', 'Huawei', 'LG', 'Lenovo']
 cols = ['product_id','category_code','brand','price', 'price_category']
@@ -69,7 +61,7 @@ heading_properties = [('font-size', '18px'),('text-align', 'center'),
                       ('color', 'white'),  ('font-weight', 'bold'),
                       ('background', 'gray'),('border', '1.2px solid black')]
 
-cell_properties = [('font-size', '16px'),('text-align', 'center')]
+cell_properties = [('font-size', '20px'),('text-align', 'center')]
 
 # definite the styler function
 dfstyle = [{"selector": "th", "props": heading_properties},
@@ -87,7 +79,7 @@ def make_pretty(styler):
 ##########################################
 
 st.title("Let's start your shopping journey!")
-st.markdown('''##### <span style="color:gray; font-size: 40px;">Our 5 most popular brands</span>
+st.markdown('''##### <span style="color:gray; font-size: 30px;">Our 5 most popular brands</span>
             ''', unsafe_allow_html=True)
 st.write('')
 
@@ -104,7 +96,7 @@ st.sidebar.markdown('''1️⃣ <span style="font-weight:bold">Catch attention</s
 st.sidebar.markdown("    Display best seller products for popular brands")
 st.sidebar.markdown('''2️⃣ <span style="font-weight:bold">Facilitate choice</span>''', unsafe_allow_html=True)
 st.sidebar.markdown("    Provide relevant and meaningful selection of products")
-st.sidebar.markdown('3️⃣ <span style="font-weight:bold">Enrich basket</span>', unsafe_allow_html=True)
+st.sidebar.markdown('''3️⃣ <span style="font-weight:bold">Enrich basket</span>''', unsafe_allow_html=True)
 st.sidebar.markdown("    Identify cross selling product option")
 st.sidebar.write('')
 st.sidebar.markdown('Contributors: Zhenghan Hu, Héléna Antoniadis, Christian Jergen')
@@ -155,7 +147,7 @@ with tab_start:
 def expand_brand(i):
     st.write('')
     st.write(f'''
-            ##### <div style="text-align: center"> Top 5 products of <span style="color:indianred"> {brands[i]} </span> : </span> </div>
+            #### <div style="text-align: center"> Top 5 products of <span style="color:indianred"> {brands[i]} </span> : </span> </div>
             ''', unsafe_allow_html=True)
     brand_df = df[df.brand==brands[i].lower()][cols]
     brand_df.rename(columns={'category_code': 'Description', 'brand':'Brand','product_id':'Product ID', 'price':'Price', 'price_category':'Price category'}, inplace=True)
@@ -190,7 +182,7 @@ def expand_brand(i):
         #load recommendation model
         rec_df = recommendation_model(product, df_1, df_2, meta_df, weight_features = 0.8)
         rec_df = top_n_products(rec_df, meta_df, n=10, ranking='features')
-        rec_df.rename(columns={'meta_text': 'description'}, inplace=True)
+        rec_df.rename(columns={'meta_text': 'Description','product_id':'Product ID', 'price':'Price'}, inplace=True)
 
         rec_styler = rec_df.style.pipe(make_pretty)
         st.table(rec_styler)

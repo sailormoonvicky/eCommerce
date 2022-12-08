@@ -25,15 +25,11 @@ def get_data_2(local=True):
         path_df1 = f"gcs://{BUCKET_NAME}/latent_df_1_with_100pct_data_50_svd_components_oct19.csv"
         path_df2 = f'gcs://{BUCKET_NAME}/latent_df_2_with_100pct_data_100_svd_components_oct19.csv'
         path_df3 = f'gcs://{BUCKET_NAME}/df_concat.csv'
-        # client = bigquery.Client()
-        # dataset_ref = bigquery.DatasetReference(project, dataset_id)
-        # table_ref = dataset_ref.table("shakespeare")
-        # table = client.get_table(table_ref)
-        # df = client.list_rows(table).to_dataframe()
 
         df_1 = pd.read_csv(path_df1, storage_options={"token":credentials}, index_col=[0])
         df_2 = pd.read_csv(path_df2, storage_options={"token":credentials}, index_col=[0])
         meta_df = pd.read_csv(path_df3, storage_options={"token":credentials}, index_col=[0])
+        
     return (df_1, df_2, meta_df)
 
 def recommendation_model(product_id, df_1, df_2, meta_df, weight_features = 0.8):
